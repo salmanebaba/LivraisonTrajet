@@ -1,25 +1,38 @@
-# 🚚 Optimisation de Tournées de Livraison
+# 🚚 Delivery Route Optimization System
 
-**Système de calcul d'itinéraires optimisés** utilisant :
-- **OSRM** pour le moteur de routage
+**An intelligent route planning solution** for small businesses using:
+- **OSRM** routing engine
 - **FastAPI** (backend API)
-- **Leaflet.js** (carte interactive)
-- **Docker** pour le déploiement
+- **Leaflet.js** (interactive map)
+- **Docker** containerization
 
-## 📋 Prérequis
+![Interface Preview](image.png)  
+
+## 🌟 Key Features
+- Optimized delivery routes for **Morocco** (easily adaptable to other countries)
+- Designed for small businesses and local logistics
+- Interactive map visualization
+- Docker-based deployment
+
+## 📋 Prerequisites
 
 - Docker 🐳 + Docker Compose
-- Python 3.11+ (pour développement local)
+- Python 3.11+ (for local development)
 
 ## 🛠 Installation
 
 ```bash
-# 1. Cloner le dépôt
-git clone https://github.com/babasalmane/LivraisonTrajet.git
-cd LivraisonTrajet
+# 1. Clone repository
+git clone https://github.com/babasalmane/LIvraisonTrajet.git
+cd LIvraisonTrajet
 
-# 2. Créer le dossier des cartes (obligatoire)
+# 2. Create maps directory (required)
 mkdir -p maps && touch maps/.gitkeep
 
-# 3. Lancer les services
+# 3. Start services (first time)
 docker-compose up --build
+
+# Then u can just use:
+docker-compose up
+```
+- U can see the resulta here:     http://localhost:8080
