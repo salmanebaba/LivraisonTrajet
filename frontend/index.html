@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <title>Livraison Optimisée</title>
+  <style>
+    body { margin: 0; display: flex; height: 100vh; font-family: sans-serif; }
+    header { position: absolute; width: 100%; top: 0; padding: 10px 20px; background-color: #1e88e5; color: white; z-index: 1; font-size: 1.5rem; text-align: center; }
+    .sidebar { width: 300px; background: #f0f0f0; padding: 80px 20px 20px; box-shadow: 2px 0 5px rgba(0,0,0,0.1); overflow-y: auto; }
+    .map { flex: 1; height: 100%; padding-top: 60px; }
+    #mapid { width: 100%; height: 100%; }
+    input, button { width: 100%; padding: 8px; margin-bottom: 10px; }
+    button { background-color: #1e88e5; color: white; border: none; font-weight: bold; cursor: pointer; }
+    label { font-weight: bold; display: block; margin-top: 10px; }
+    .log { font-size: 0.9rem; color: green; }
+  </style>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+</head>
+<body>
+  <header>🚚 Livraison Optimisée avec OSRM</header>
+
+  <div class="sidebar">
+    <h3>Ajouter Localisation</h3>
+    <label>Latitude</label>
+    <input type="number" id="latInput" step="any">
+    <label>Longitude</label>
+    <input type="number" id="lonInput" step="any">
+    <button onclick="addManualPoint()">Ajouter Coordonnée</button>
+    <button onclick="optimizeRoute()">Optimiser et Afficher</button>
+    <div class="log" id="log"></div>
+  </div>
+
+  <div class="map">
+    <div id="mapid"></div>
+  </div>
+
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  <script>
+    const map = L.map('mapid');
+    let homeCoord = null;
+    const log = document.getElementById("log");
+    let coords = [];
+    let markers = [];
+    let routeLayer = null;
+    let homeMarker = null;
+
+    function addManualPoint() {
+      const lat = parseFloat(document.getElementById("latInput").value);
+      const lon = parseFloat(document.getElementById("lonInput").value);
+      if (!isNaN(lat) && !isNaN(lon)) {
+        addPoint([lat, lon]);
+      }
+    }
+
+    function addPoint(latlng) {
+      coords.push(latlng);
+      const marker = L.marker(latlng).addTo(map);
+      markers.push(marker);
+    }
+
+    function clearMap() {
+      markers.forEach(m => map.removeLayer(m));
+      markers = [];
+      if (routeLayer) map.removeLayer(routeLayer);
+      routeLayer = null;
+    }
+
+    async function optimizeRoute() {
+      if (coords.length < 1) return alert("Ajoutez au moins un point de livraison.");
+
+      const res = await fetch("http://localhost:8000/optimized-route", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ locations: coords })
+      });
+
+      const data = await res.json();
+      if (data.geometry) {
+        clearMap();
+        const ordered = data.ordered;
+
+        ordered.forEach(([lon, lat], i) => {
+          const marker = L.marker([lat, lon]).addTo(map)
+            .bindTooltip(i === 0 ? "🏠 Départ/Arrivée" : (i).toString(), {
+              permanent: true,
+              direction: "top"
+            });
+          markers.push(marker);
+        });
+
+        routeLayer = L.geoJSON(data.geometry, { style: { color: "blue", weight: 4 } }).addTo(map);
+        log.innerText = "✅ Tournée optimisée et affichée.";
+      } else {
+        log.innerText = "❌ Erreur d'optimisation.";
+      }
+    }
+
+    async function initMap() {
+      const res = await fetch("http://localhost:8000/get-home");
+      const data = await res.json();
+      const [lat, lon] = data.home;
+      homeCoord = [lat, lon];
+
+      map.setView(homeCoord, 13);
+      homeMarker = L.marker(homeCoord, {
+        icon: L.icon({
+          iconUrl: "https://maps.gstatic.com/mapfiles/ms2/micons/homegardenbusiness.png",
+          iconSize: [32, 32]
+        })
+      }).addTo(map).bindTooltip({ permanent: true, direction: "top" });
+
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+
+      // Allow map click to add points
+      map.on("click", e => {
+        addPoint([e.latlng.lat, e.latlng.lng]);
+      });
+    }
+
+    initMap();
+  </script>
+</body>
+</html>
