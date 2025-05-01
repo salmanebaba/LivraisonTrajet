@@ -36,3 +36,21 @@ docker-compose up --build
 docker-compose up
 ```
 - You can see the results here:     http://localhost:8080
+
+
+## Workflow:
+
+-Add delivery points via map clicks or manual input
+
+-Click "Optimize Route"
+
+-View optimized path with sequence numbers
+
+## 🌍 Multi-Country Support
+-While pre-configured for Morocco, you can easily adapt to other countries:
+
+-Modify REGION="morocco" in osrm/osrm-init.sh
+
+- Choose from [Geofabrik's regional datasets](https://download.geofabrik.de/)
+
+-Follow the installation steps again
