@@ -31,7 +31,8 @@ mkdir -p maps && touch maps/.gitkeep
 
 # 3. Start services (first time)
 docker-compose up --build
-
+```
+```bash
 # Then u can just use:
 docker-compose up
 ```
