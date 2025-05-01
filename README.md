@@ -35,4 +35,4 @@ docker-compose up --build
 # Then u can just use:
 docker-compose up
 ```
-- U can see the resulta here:     http://localhost:8080
+- You can see the results here:     http://localhost:8080
