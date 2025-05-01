@@ -1,0 +1,38 @@
+
+services:
+  backend:
+    build: ./backend
+    ports:
+      - "8000:8000"
+    depends_on:
+      - osrm
+    networks:
+      - appnet
+
+  osrm:
+    build: ./osrm
+    volumes:
+      - ./maps:/data
+    ports:
+      - "5000:5000"
+    networks:
+      - appnet
+    healthcheck:
+      test: ["CMD-SHELL", "curl -sSf http://localhost:5000/route/v1/driving/0,0 || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  frontend:
+    image: nginx:alpine
+    volumes:
+      - ./frontend/index.html:/usr/share/nginx/html/index.html
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+    networks:
+      - appnet
+
+networks:
+  appnet:
