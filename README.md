@@ -23,8 +23,8 @@
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/babasalmane/LIvraisonTrajet.git
-cd LIvraisonTrajet
+git clone https://github.com/babasalmane/LivraisonTrajet.git
+cd LivraisonTrajet
 
 # 2. Create maps directory (required)
 mkdir -p maps && touch maps/.gitkeep
