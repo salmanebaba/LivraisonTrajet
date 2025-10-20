@@ -23,7 +23,7 @@
 
 ```bash
 # 1. Clone repository
-git clone https://github.com/babasalmane/LivraisonTrajet.git
+git clone https://github.com/salmanebaba/LivraisonTrajet.git
 cd LivraisonTrajet
 
 # 2. Create maps directory (required)
