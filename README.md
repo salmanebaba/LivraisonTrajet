@@ -30,11 +30,11 @@ cd LivraisonTrajet
 mkdir -p maps && touch maps/.gitkeep
 
 # 3. Start services (first time)
-docker-compose up --build
+docker compose up --build
 ```
 ```bash
 # Then u can just use:
-docker-compose up
+docker compose up
 ```
 - You can see the results here:     http://localhost:8080
 
